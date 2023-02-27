@@ -1,0 +1,358 @@
+@import "reset.css";
+@import url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css);
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "GmarketSansMedium";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "NanumSquareNeo-Variable";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+button,
+input {
+  outline: none;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+header#mode-tool {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  padding: 0 20px;
+  border-bottom: 1px solid #000;
+  background-color: #fff;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header#mode-tool > h1 {
+  flex: 1;
+}
+
+header#mode-tool > div {
+  flex: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header#mode-tool ul {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+header#mode-tool label,
+header#mode-tool button {
+  border: 1px solid #000;
+  padding: 3px 20px 2px;
+  display: inline-block;
+}
+header#mode-tool label:hover,
+header#mode-tool button:hover {
+  background: #f1c50f;
+}
+header#mode-tool input.active + label {
+  background: #000;
+  color: #fff;
+}
+
+#color-tool::before {
+  content: "";
+  background: #000;
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  z-index: -1;
+}
+
+#color-tool {
+  position: absolute;
+  left: 20px;
+  top: calc(50% + 30px);
+  height: calc(90% - 100px);
+  width: 40px;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+#color-tool > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.current-color {
+  position: relative;
+}
+.current-color:hover #color-value {
+  display: block;
+  width: auto;
+}
+#color-value {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  padding-left: 5px;
+  text-transform: uppercase;
+}
+.color-list {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #000;
+  cursor: pointer;
+  margin-top: 8px;
+  /* transition: all 0.2s; */
+}
+.color-list:hover {
+  transform: scale(1.1);
+}
+
+#size-tool:hover #size-value {
+  display: block;
+}
+#size-tool #size-value {
+  display: none;
+  position: absolute;
+  width: auto;
+  left: -100%;
+  top: 0;
+}
+#size-tool {
+  position: absolute;
+  right: 20px;
+  top: calc(50% + 30px);
+  height: calc(90% - 100px);
+  width: 40px;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+#size-tool > div {
+  width: 100%;
+  height: 100%;
+}
+
+#size-tool input#size {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  outline: none;
+  transform: rotate(90deg);
+  height: 40px;
+  width: calc(90vh - 100px);
+  transform-origin: left bottom;
+  position: absolute;
+  top: -40px;
+}
+
+#size-tool input#size::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: #000;
+  top: 50%;
+  z-index: -1;
+}
+#size-tool input#size::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+}
+#size-tool input#size::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #000;
+  background: #fff;
+  cursor: pointer;
+}
+#size-tool input#size::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+input:not([type="radio"]),
+output {
+  display: block;
+  width: 100%;
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+label {
+  cursor: pointer;
+}
+
+input#color {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #000;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  outline: none;
+}
+input#color::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input#color::-webkit-color-swatch {
+  border: none;
+}
+
+input#file {
+  display: none;
+}
+
+canvas {
+  cursor: none;
+  margin: 0 auto;
+}
+
+#cursor {
+  transition: background-color 0.2s ease-in-out;
+  opacity: 0;
+  position: absolute;
+  cursor: none;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #000000;
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  border: 1px solid #000000;
+}
+
+dialog {
+  text-align: center;
+  width: 30%;
+  padding: 40px;
+  border: 1px solid #000;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+dialog p {
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+dialog button {
+  border: 1px solid #000;
+  /* transition: all 0.2s; */
+}
+dialog button:hover {
+  background: #f1c50f;
+}
+dialog input {
+  width: 100%;
+  border: 1px solid #000;
+  padding: 5px 10px;
+  margin-bottom: 20px;
+}
+
+#txt-font-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+input#txt-size {
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  position: relative;
+  z-index: 1;
+  flex: 9;
+  margin-bottom: 0;
+}
+input#txt-size::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: #000;
+  top: 50%;
+  z-index: -1;
+}
+input#txt-size::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+}
+input#txt-size::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #000;
+  background: #fff;
+  cursor: pointer;
+  /* transition: all 0.2s; */
+}
+output#txt-size-value {
+  width: auto;
+  flex: 1 15px;
+  text-align: right;
+}
+
+select#txt-font {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  flex: 1;
+  border: 1px solid #000;
+  padding: 0 10px;
+  background: no-repeat
+    url(https://img.icons8.com/metro/52/null/chevron-down.png) center right 10px /
+    12px;
+}
+
+#txt-kind-group {
+  display: flex;
+  margin-bottom: 20px;
+}
+#txt-kind-group .radio-group {
+  flex: 1;
+  text-align: right;
+  font-size: 0;
+}
+#txt-kind-group .radio-group label {
+  font-size: 16px;
+}
