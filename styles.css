@@ -68,13 +68,13 @@ header#mode-tool ul {
   height: 60px;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 10px;
 }
 
 header#mode-tool label,
 header#mode-tool button {
   border: 1px solid #000;
-  padding: 3px 20px 2px;
+  padding: 3px 12px 2px;
   display: inline-block;
 }
 header#mode-tool label:hover,
@@ -114,11 +114,11 @@ header#mode-tool input.active + label {
 .current-color {
   position: relative;
 }
-.current-color:hover #color-value {
+#color-tool:hover #color-output {
   display: block;
   width: auto;
 }
-#color-value {
+#color-output {
   display: none;
   position: absolute;
   left: 100%;
@@ -139,10 +139,10 @@ header#mode-tool input.active + label {
   transform: scale(1.1);
 }
 
-#size-tool:hover #size-value {
+#size-tool:hover #size-output {
   display: block;
 }
-#size-tool #size-value {
+#size-tool #size-output {
   display: none;
   position: absolute;
   width: auto;
@@ -233,7 +233,7 @@ input#color::-webkit-color-swatch {
   border: none;
 }
 
-input#file {
+input#image {
   display: none;
 }
 
@@ -326,7 +326,7 @@ input#txt-size::-webkit-slider-thumb {
   cursor: pointer;
   /* transition: all 0.2s; */
 }
-output#txt-size-value {
+output#txt-size-output {
   width: auto;
   flex: 1 15px;
   text-align: right;

@@ -1,40 +1,3 @@
-const canvas = document.querySelector("canvas");
-const ctx = canvas.getContext("2d");
-const cursor = document.querySelector("#cursor");
-
-const colorInput = document.querySelector("#color");
-const colorValue = document.querySelector("#color-value");
-const sizeInput = document.querySelector("#size");
-const sizeValue = document.querySelector("#size-value");
-const txtSizeInput = document.querySelector("#txt-size");
-const txtSizeValue = document.querySelector("#txt-size-value");
-const txtFont = document.querySelector("#txt-font");
-const txtKind = document.getElementsByName("txt-kind");
-let textFont;
-let textFill = true;
-
-const colorPalette = document.querySelectorAll(".color-list");
-
-const mode = document.getElementsByName("mode");
-const reset = document.querySelector("#reset-btn");
-const save = document.querySelector("#save-btn");
-const fileInput = document.querySelector("#file");
-const textInput = document.querySelector("#text");
-const txt = document.querySelector("#txt-btn");
-
-const clearDialog = document.querySelector("#clear-dialog");
-const txtDialog = document.querySelector("#txt-dialog");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 60;
-
-ctx.lineCap = "round";
-
-ctx.lineWidth = 30;
-cursor.style.width = `${ctx.lineWidth}px`;
-cursor.style.height = `${ctx.lineWidth}px`;
-sizeInput.value = ctx.lineWidth;
-
 // fillRect = fill+Rect = fill + (moveTo+lineTo)
 
 // moveTo 선을 긋지 않으면서 연필위치 이동
@@ -43,15 +6,95 @@ sizeInput.value = ctx.lineWidth;
 // beginPath 다른 style 적용할 때
 // fill, stroke 마지막에 선언 후 그려짐
 
-let isPainting = false;
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
 
+const stepPushArr = new Array();
+let stepNumber = -1;
+
+const cursor = document.querySelector("#cursor");
+
+const colorInput = document.querySelector("#color");
+const colorOutput = document.querySelector("#color-output");
+const colorList = document.querySelectorAll(".color-list");
+
+const sizeInput = document.querySelector("#size");
+const sizeOutput = document.querySelector("#size-output");
+
+const txtInput = document.querySelector("#txt");
+const txtSizeInput = document.querySelector("#txt-size");
+const txtSizeOutput = document.querySelector("#txt-size-output");
+const txtFont = document.querySelector("#txt-font");
+const txtKind = document.getElementsByName("txt-kind");
+let selectFont;
+let isTxtFill = true;
+
+const modeList = document.getElementsByName("mode");
+const clearBtn = document.querySelector("#clear-btn");
+const saveBtn = document.querySelector("#save-btn");
+const undoBtn = document.querySelector("#undo-btn");
+const redoBtn = document.querySelector("#redo-btn");
+const imageBtn = document.querySelector("#image");
+const txtBtn = document.querySelector("#txt-btn");
+let isPainting = false;
 let lassoMode = false;
 let fillMode = false;
 let eraserMode = false;
 
-colorValue.textContent = colorInput.value;
-sizeValue.textContent = sizeInput.value;
-txtSizeValue.textContent = `${txtSizeInput.value}px`;
+const clearDialog = document.querySelector("#clear-dialog");
+const txtDialog = document.querySelector("#txt-dialog");
+
+function onLoad() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight - 60;
+
+  ctx.lineCap = "round";
+  ctx.lineWidth = 30;
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  stepPush();
+
+  cursor.style.width = `${ctx.lineWidth}px`;
+  cursor.style.height = `${ctx.lineWidth}px`;
+
+  sizeInput.value = ctx.lineWidth;
+  colorOutput.textContent = colorInput.value;
+  sizeOutput.textContent = sizeInput.value;
+  txtSizeOutput.textContent = `${txtSizeInput.value}px`;
+  ctx.fillStyle = colorInput.value;
+}
+
+function stepPush() {
+  stepNumber++;
+  if (stepNumber < stepPushArr.length) {
+    stepPushArr.length = stepNumber;
+  }
+  stepPushArr.push(canvas.toDataURL());
+}
+
+function stepUndo() {
+  if (stepNumber > 0) {
+    stepNumber--;
+    const thisCanvas = new Image();
+    thisCanvas.src = stepPushArr[stepNumber];
+
+    thisCanvas.onload = function () {
+      ctx.drawImage(thisCanvas, 0, 0, canvas.width, canvas.height);
+    };
+  }
+}
+
+function stepRedo() {
+  if (stepNumber < stepPushArr.length - 1) {
+    stepNumber++;
+    const thisCanvas = new Image();
+    thisCanvas.src = stepPushArr[stepNumber];
+
+    thisCanvas.onload = function () {
+      ctx.drawImage(thisCanvas, 0, 0, canvas.width, canvas.height);
+    };
+  }
+}
 
 function onMove(event) {
   cursor.style.opacity = 1;
@@ -70,7 +113,7 @@ function onMove(event) {
     if (eraserMode) {
       ctx.strokeStyle = "white";
     } else {
-      ctx.strokeStyle = colorValue.textContent;
+      ctx.strokeStyle = colorOutput.textContent;
     }
 
     ctx.stroke();
@@ -91,12 +134,17 @@ function startPainting() {
 function cancelPainting() {
   isPainting = false;
   ctx.beginPath();
+  return stepPush();
+}
+function cancelPainting2() {
+  isPainting = false;
+  ctx.beginPath();
 }
 
 function colorChange(event) {
   const thisColor = event.target.value;
 
-  colorValue.textContent = thisColor;
+  colorOutput.textContent = thisColor;
   ctx.strokeStyle = thisColor;
   ctx.fillStyle = thisColor;
   cursor.style.backgroundColor = thisColor;
@@ -105,7 +153,7 @@ function colorChange(event) {
 function sizeChange(event) {
   const thisSize = event.target.value;
 
-  sizeValue.textContent = thisSize;
+  sizeOutput.textContent = thisSize;
   ctx.lineWidth = thisSize;
   cursor.style.width = `${thisSize}px`;
   cursor.style.height = `${thisSize}px`;
@@ -114,7 +162,7 @@ function sizeChange(event) {
 function colorPaletteOnClick(event) {
   const thisColor = event.target.dataset.color;
 
-  colorValue.textContent = thisColor;
+  colorOutput.textContent = thisColor;
   colorInput.value = thisColor;
   ctx.strokeStyle = thisColor;
   ctx.fillStyle = thisColor;
@@ -140,9 +188,10 @@ function resetCanvas() {
   if (clearDialog.returnValue === "confirm") {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    stepPush();
     return (
-      (ctx.strokeStyle = colorValue.textContent),
-      (ctx.fillStyle = colorValue.textContent)
+      (ctx.strokeStyle = colorOutput.textContent),
+      (ctx.fillStyle = colorOutput.textContent)
     );
   }
 }
@@ -167,31 +216,34 @@ function onFileChange(event) {
     let y = canvas.height / 2 - newHeight / 2;
 
     ctx.drawImage(newImg, x, y, newWidth, newHeight);
+    stepPush();
   };
 }
 
 function txtSizeChange(event) {
   const thisSize = event.target.value;
-  txtSizeValue.textContent = `${thisSize}px`;
+  txtSizeOutput.textContent = `${thisSize}px`;
 }
 
 function txtFontChange(event) {
   const thisFont = event.target[txtFont.selectedIndex].value;
-  textFont = thisFont;
+  selectFont = thisFont;
 }
 
 function onDoubleClick(event) {
-  const thisText = textInput.value;
+  const thisText = txtInput.value;
   if (thisText !== "") {
     ctx.save();
-    ctx.font = `${txtSizeInput.value}px ${textFont}`;
+    ctx.font = `${txtSizeInput.value}px ${selectFont}`;
     ctx.lineWidth = 1;
-    if (textFill) {
+    ctx.fillStyle = colorInput.value;
+    if (isTxtFill) {
       ctx.fillText(thisText, event.offsetX, event.offsetY);
     } else {
       ctx.strokeText(thisText, event.offsetX, event.offsetY);
     }
     ctx.restore();
+    stepPush();
   }
 }
 
@@ -207,21 +259,21 @@ canvas.addEventListener("mousemove", onMove);
 canvas.addEventListener("click", onFillMode);
 canvas.addEventListener("mousedown", startPainting);
 canvas.addEventListener("mouseup", cancelPainting);
-canvas.addEventListener("mouseleave", cancelPainting);
+canvas.addEventListener("mouseleave", cancelPainting2);
 canvas.addEventListener("dblclick", onDoubleClick);
 
 colorInput.addEventListener("input", colorChange);
 sizeInput.addEventListener("input", sizeChange);
 txtSizeInput.addEventListener("input", txtSizeChange);
 
-colorPalette.forEach((thisColor) =>
+colorList.forEach((thisColor) =>
   thisColor.addEventListener("click", colorPaletteOnClick)
 );
 
-mode.forEach((thisMode) => {
+modeList.forEach((thisMode) => {
   thisMode.addEventListener("input", modeChange);
   thisMode.addEventListener("click", () => {
-    mode.forEach((el) => el.classList.remove("active"));
+    modeList.forEach((el) => el.classList.remove("active"));
     thisMode.classList.add("active");
   });
 });
@@ -231,34 +283,40 @@ txtKind.forEach((thisTxt) => {
     txtKind.forEach((el) => el.classList.remove("active"));
     thisTxt.classList.add("active");
     if (thisTxt.value !== "Fill") {
-      textFill = false;
+      isTxtFill = false;
     } else {
-      textFill = true;
+      isTxtFill = true;
     }
   });
 });
 
-reset.addEventListener("click", () => {
+clearBtn.addEventListener("click", () => {
   clearDialog.showModal();
 });
 clearDialog.addEventListener("close", resetCanvas);
-txt.addEventListener("click", () => {
+txtBtn.addEventListener("click", () => {
   txtDialog.showModal();
 });
-save.addEventListener("click", onSave);
+saveBtn.addEventListener("click", onSave);
 
-fileInput.addEventListener("input", onFileChange);
+imageBtn.addEventListener("input", onFileChange);
 
 txtFont.addEventListener("input", txtFontChange);
 
-// window.addEventListener("resize", () => {
-//   canvas.width = window.innerWidth;
-//   canvas.height = window.innerHeight - 60;
+undoBtn.addEventListener("click", stepUndo);
+redoBtn.addEventListener("click", stepRedo);
+document.addEventListener("keydown", (event) => {
+  const ctrl = event.ctrlKey || event.metaKey;
+  const shift = event.shiftKey;
+  const z = event.key === "z";
 
-//   ctx.lineCap = "round";
+  if (ctrl && shift && z) {
+    stepRedo();
+    return;
+  }
+  if (ctrl && z) {
+    stepUndo();
+  }
+});
 
-//   ctx.lineWidth = 30;
-//   cursor.style.width = `${ctx.lineWidth}px`;
-//   cursor.style.height = `${ctx.lineWidth}px`;
-//   sizeInput.value = ctx.lineWidth;
-// });
+window.addEventListener("load", onLoad);

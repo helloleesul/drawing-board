@@ -58,15 +58,15 @@
         <ul>
           <li>추가</li>
           <li>
-            <input id="file" type="file" accept="image/*" />
-            <label for="file">이미지</label>
+            <input id="image" type="file" accept="image/*" />
+            <label for="image">이미지</label>
           </li>
           <li>
             <button id="txt-btn">텍스트</button>
             <dialog id="txt-dialog">
               <p>텍스트 입력 후 원하는 위치에 더블클릭 하세요.</p>
               <form method="dialog">
-                <input id="text" type="text" placeholder="입력하세요." />
+                <input id="txt" type="text" placeholder="입력하세요." />
                 <div id="txt-font-group">
                   <input
                     id="txt-size"
@@ -76,7 +76,7 @@
                     value="10"
                     step="5"
                   />
-                  <output id="txt-size-value"></output>
+                  <output id="txt-size-output"></output>
                 </div>
                 <div id="txt-kind-group">
                   <select name="txt-font" id="txt-font">
@@ -114,7 +114,7 @@
             </dialog>
           </li>
           <li>
-            <button id="reset-btn">새 그림</button>
+            <button id="clear-btn">새 그림</button>
             <dialog id="clear-dialog">
               <p>그림을 모두 삭제하시겠습니까?</p>
               <form method="dialog">
@@ -123,6 +123,11 @@
               </form>
             </dialog>
           </li>
+        </ul>
+        <ul>
+          <li>실행</li>
+          <li><button id="undo-btn">뒤로</button></li>
+          <li><button id="redo-btn">앞으로</button></li>
         </ul>
         <button id="save-btn">저장</button>
       </div>
@@ -135,7 +140,7 @@
       <div>
         <div class="current-color">
           <input id="color" type="color" value="#000000" />
-          <output id="color-value"></output>
+          <output id="color-output"></output>
         </div>
         <ul class="color-group">
           <li
@@ -175,8 +180,8 @@
           ></li>
           <li
             class="color-list"
-            data-color="#34495e"
-            style="background-color: #34495e"
+            data-color="#000000"
+            style="background-color: #000000"
           ></li>
           <li
             class="color-list"
@@ -202,7 +207,7 @@
           value="10"
           step="5"
         />
-        <output id="size-value"></output>
+        <output id="size-output"></output>
       </div>
     </div>
 
