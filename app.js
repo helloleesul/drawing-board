@@ -49,7 +49,7 @@ function onLoad() {
   canvas.height = window.innerHeight - 60;
 
   ctx.lineCap = "round";
-  ctx.lineWidth = 30;
+  ctx.lineWidth = 10;
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   stepPush();
